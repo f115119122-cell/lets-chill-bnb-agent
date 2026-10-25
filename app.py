@@ -177,8 +177,9 @@ def calculate_stay_cost(room_name, check_in_date, nights, guests, addons=None):
         addons_subtotal += price * count
 
     total = room_subtotal + addons_subtotal
-    return {"room": room["name"], "room_zh": room["name_zh"], "guests": guests,
-            "check_in": check_in.isoformat(), "check_out": (check_in + timedelta(days=nights)).isoformat(),
+    check_out = check_in + timedelta(days=nights)
+    return {"room": room["name"], "room_zh": room["name_zh"], "guests": guests,       # 日期附上星期幾，讓模型照抄
+            "check_in": f"{check_in:%Y-%m-%d} ({check_in:%a})", "check_out": f"{check_out:%Y-%m-%d} ({check_out:%a})",
             "nights": night_lines, "room_subtotal": room_subtotal,
             "addons": addon_lines, "addons_subtotal": addons_subtotal,
             "total": total, "deposit_30_percent": round(total * 0.3), "about_dates": DATES_NOTE}
@@ -272,10 +273,11 @@ WHICH TOOL
 8. Complaints, refunds, special requests, or B&B questions no tool can answer -> transfer_to_human.
 
 DATES
-9. Turn dates like "this Friday" into YYYY-MM-DD using today's date given below.
+9. Turn dates like "this Friday" into YYYY-MM-DD using the calendar given below. Never work out a weekday yourself.
    If a date could mean two different days (for example "next Friday" said on a weekend,
    or "10/29, 10/30" which may be the nights or the check-in and check-out days), ask which one first.
 10. In every price answer, write the check-in and check-out dates you used, so the customer can check them.
+    Copy each weekday from the tool result or the calendar.
 
 LANGUAGE AND FORMAT
 11. Answer politely, in four sentences or less. Use a short list for a price breakdown.
@@ -310,7 +312,10 @@ def run_agent(chat_history, language="Traditional Chinese"):
     """回答 chat_history 最後一個問題。language 由畫面上的切換按鈕決定。回傳 (answer, trace)。"""
     history = [{"role": m["role"], "content": message_text(m["content"])} for m in chat_history]
     today = date.today()
-    context = f"Today is {today.isoformat()} ({today.strftime('%A')}). Reply in {language}."
+    # 模型不會推算星期幾（測試時把 11/01 週日說成週一），所以由程式列出未來兩週的日曆給它查
+    calendar = ", ".join(f"{day:%Y-%m-%d} {day:%a}" for day in (today + timedelta(days=i) for i in range(15)))
+    context = (f"Today is {today.isoformat()} ({today.strftime('%A')}). "
+               f"Calendar for the next two weeks: {calendar}. Reply in {language}.")
     messages = ([{"role": "system", "content": SYSTEM_PROMPT}] + history[:-1]
                 + [{"role": "system", "content": context}]      # 日期與語言由程式決定
                 + history[-1:])
