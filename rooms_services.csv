@@ -1,0 +1,16 @@
+item_id,name,name_zh,category,unit,weekday_price,weekend_price,capacity,available,note
+101,Garden Double Room,庭園雙人房,room,room_night,2200,2800,2,1,One double bed. Garden view on the ground floor.
+102,Ocean View Double Room,海景雙人房,room,room_night,2800,3600,2,1,One double bed and a balcony facing Nanwan Beach.
+103,Ocean View Twin Room,海景雙床房,room,room_night,3000,3800,2,1,Two single beds and a balcony facing the sea.
+104,Family Quad Room,家庭四人房,room,room_night,4200,5200,4,0,Closed for renovation until 2026-12-31.
+105,Ocean View Quad Room,海景四人房,room,room_night,4800,6000,4,1,Two double beds and a large sea-view balcony.
+106,Rooftop Suite,頂樓景觀套房,room,room_night,5500,6800,2,1,Top floor with a private terrace and bathtub.
+201,Breakfast,早餐,addon,person_night,250,250,1,1,Per person per day. Served 07:30 to 09:30.
+202,Zuoying THSR Pick-up,高鐵左營站接送,addon,trip,1500,1500,4,1,One way per car (up to 4 people). Book 2 days ahead.
+203,Scooter Rental,機車租借,addon,item_day,400,400,2,1,Per scooter per day. A valid scooter license is required.
+204,Bicycle Rental,自行車租借,addon,item_day,150,150,1,1,Per bicycle per day.
+205,Snorkeling Tour,浮潛體驗,addon,person,900,900,1,1,2 hours with a coach. Ages 8 and up.
+206,Night Ecology Tour,夜間生態導覽,addon,person,600,600,1,1,1.5 hours. Starts at 19:30.
+207,Beach BBQ Set,海灘烤肉組,addon,set,1200,1200,4,1,Food and grill for 4 people.
+208,Late Check-out (until 14:00),延遲退房至14:00,addon,set,500,500,1,1,Per room. Subject to availability.
+209,Stand-up Paddle (SUP),立槳體驗,addon,person,1100,1100,1,0,Not offered from October to March because of the strong northeast wind.
