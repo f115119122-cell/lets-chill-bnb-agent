@@ -48,7 +48,8 @@ The panel on the right of the chat page shows each tool call, its arguments and 
   | `calculate_stay_cost(room_name, check_in_date, nights, guests, addons)` | checks every night: Friday and Saturday nights use the weekend price, other nights the weekday price; then adds the add-ons by their unit (per person per day, per person, per item per day, per trip or per set) and returns the total and a 30% deposit |
   | `transfer_to_human(reason)` | gives the host's LINE ID and phone number |
 
-- **Safety in the agent loop:** at most 6 model calls per question; only our own four tools can run (an unknown tool name or bad arguments return an error instead of crashing); today's date is given to the model so that "this Friday" becomes a real date.
+- **Safety in the agent loop:** at most 6 model calls per question; only our own four tools can run (an unknown tool name or bad arguments return an error instead of crashing); today's date and a calendar of the next 15 days are given to the model so that "this Friday" becomes a real date,
+  and `calculate_stay_cost` returns every date with its weekday (the model wrote wrong weekdays when it worked them out itself).
 
 ## Sample Conversations
 
