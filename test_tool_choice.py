@@ -6,9 +6,14 @@
 """
 
 import re
+import sys
 import time
+from pathlib import Path
 
 from app import run_agent
+
+sys.stdout.reconfigure(encoding="utf-8")       # 模型回答可能有 cp950 沒有的字元（例如 ‑），一律用 UTF-8 輸出
+RESULT_FILE = Path(__file__).parent / "test_result.txt"
 
 NONE = "none"      # 不該用工具：反問客人，或婉拒不相關的話題
 
@@ -48,17 +53,32 @@ def judge(used, accept, forbid):
     return bool(set(used) & accept)
 
 
-correct = 0
+lines, misses, correct = [], [], 0
+
+
+def report(text=""):
+    """同時印在螢幕上，並留給結果檔。"""
+    print(text, flush=True)
+    lines.append(text)
+
+
 for question, accept, forbid in TEST_SET:
     language = "Traditional Chinese" if re.search(r"[一-鿿]", question) else "English"   # 模擬客人切換按鈕
     answer, trace = run_agent([{"role": "user", "content": question}], language)
     used = [t["tool"] for t in trace]
     ok = judge(used, accept, forbid)
     correct += ok
-    print(f"{'OK  ' if ok else 'MISS'} {question}")
-    print(f"     accept {sorted(accept)}" + (f"  forbid {sorted(forbid)}" if forbid else ""))
-    print(f"     used   {used or [NONE]}")
-    print(f"     answer {answer[:150]!r}\n")
+    if not ok:
+        misses.append(f"{question}  used {used or [NONE]}")
+    report(f"{'OK  ' if ok else 'MISS'} {question}")
+    report(f"     accept {sorted(accept)}" + (f"  forbid {sorted(forbid)}" if forbid else ""))
+    report(f"     used   {used or [NONE]}")
+    report(f"     answer {answer[:150]!r}\n")
     time.sleep(1)       # 避免呼叫太頻繁（429 錯誤）
 
-print(f"tool choice = {correct}/{len(TEST_SET)} = {correct / len(TEST_SET):.0%}")
+report("MISSED QUESTIONS:" if misses else "MISSED QUESTIONS: none")
+for miss in misses:
+    report(f"  - {miss}")
+report(f"tool choice = {correct}/{len(TEST_SET)} = {correct / len(TEST_SET):.0%}")
+RESULT_FILE.write_text("\n".join(lines), encoding="utf-8")
+print(f"(saved to {RESULT_FILE.name})")
